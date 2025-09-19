@@ -1,14 +1,13 @@
 {
-  "name": "interview-learning-app",
   "version": 2,
-  "buildCommand": "cd app && npm run build",
+  "installCommand": "cd app && npm ci",
+  "buildCommand": "cd app && CI=false npm run build",
   "outputDirectory": "app/build",
-  "installCommand": "cd app && npm install",
-  "framework": "create-react-app",
-  "rewrites": [
+  "framework": null,
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }

@@ -1,0 +1,939 @@
+LangChain Interview Questions (Beginner, Intermediate, Advanced)
+
+=== BEGINNER QUESTIONS ===
+
+Q1: What is LangChain?
+A1: LangChain is a framework to help build applications around large language models (LLMs)...
+
+Q2: What are the main components / modules of LangChain?
+A2: Models/LLM wrappers, PromptTemplates, Chains, Memory, Agents & Tools, Document Loaders, VectorStores.
+
+Q3: What is a Chain in LangChain?
+A3: A workflow/pipeline that sequences together one or more steps like LLM calls or retrievals.
+
+Q4: What is a PromptTemplate and why do we use it?
+A4: Template for LLM prompts with placeholders; helps reuse and dynamically format prompts.
+
+Q5: What is Memory in LangChain?
+A5: Stores conversation history or state; helps maintain context across turns.
+
+Q6: What is an Agent in LangChain?
+A6: Component that decides which tools to call dynamically, enabling more complex reasoning.
+
+Q7: What is Retrieval-Augmented Generation (RAG)?
+A7: Combining retrieval from external data sources with LLM generation to produce grounded answers.
+
+Q8: What is a Vector Store / Retriever?
+A8: Database of embeddings; retriever finds most relevant chunks for a query.
+
+Q9: What are Document Loaders and Text Splitters?
+A9: Load documents from various sources, then split into smaller chunks for embedding/retrieval.
+
+Q10: What is an Output Parser?
+A10: Parses raw LLM output into structured formats like JSON for reliable downstream use.
+
+=== INTERMEDIATE QUESTIONS ===
+
+Q1: Choosing Memory Types
+A1: Select buffer/window/summary based on context length, token limits, cost.
+
+Q2: Reducing Hallucinations
+A2: Use RAG, schema parsers, better prompts, verification tools, few-shot examples.
+
+Q3: Agent Tool Security
+A3: Restrict available tools, sanitize input, log usage, handle errors safely.
+
+Q4: LangGraph vs Legacy Agents
+A4: LangGraph offers stateful, durable, observable agents with streaming support.
+
+Q5: Designing a RAG Pipeline
+A5: Steps: Load → Split → Embed → Store → Retrieve → Generate → Parse → Monitor.
+
+Q6: Performance/Cost Trade-offs
+A6: Optimize token usage, retrieval latency, caching, smaller models.
+
+Q7: Monitoring & Evaluation
+A7: Use LangSmith, benchmarks, logging, human eval, track hallucinations.
+
+Q8: Output Parsing Failures
+A8: Retry with re-prompt, fallback parser, validation before using output.
+
+Q9: Multimodal Integration
+A9: Use models/tools supporting images/audio; preprocess to embeddings.
+
+Q10: LangMem for Long-Term Memory
+A10: Helps persistent agents learn from past and maintain personality over sessions.
+
+=== ADVANCED QUESTIONS ===
+
+Q1: Custom Tool Implementation
+A1: Define interface, wrap API calls with validation, error handling, and logging.
+
+Q2: Scaling RAG to Millions of Docs
+A2: Use FAISS/Milvus, sharding, incremental indexing, caching, time-weighted retrieval.
+
+Q3: Memory Trade-offs
+A3: Raw buffer = detail but costly, window = recent only, summary = compressed but loses info.
+
+Q4: Chaining Runnables
+A4: Composable modular units for workflows; allow streaming and parallel execution.
+
+Q5: Agent Evaluation
+A5: Metrics: accuracy, hallucination rate, latency, cost, coverage, robustness testing.
+
+Q6: ReAct in LangChain
+A6: Reasoning + acting loop: Thought → Action → Observation → Repeat. Pros: explicit reasoning. Cons: latency, misuse.
+
+Q7: Secrets & Credential Handling
+A7: Environment variables, config secrets, sandboxed tools, limited scope.
+
+Q8: Versioning & Serialization
+A8: Save/load chains, prompts under version control, manage schema migrations.
+
+Q9: Multilingual & Domain-Specific Design
+A9: Use specialized embeddings, prompts, loaders, strict output validation.
+
+Q10: Long-Running Agents Challenges
+A10: Memory bloat, drift, errors; mitigate with summarization, versioning, monitoring.
+
+
+
+# LangChain Interview Questions - Comprehensive Preparation Guide
+
+*Updated for 2025 with latest LangChain features and trends*
+
+---
+
+## 🌟 BEGINNER LEVEL QUESTIONS (10)
+
+### 1. What is LangChain and what problem does it solve?
+
+**Answer:** LangChain is an open-source framework designed to build applications powered by Large Language Models (LLMs). It solves several key problems:
+- **Chain Management**: Simplifies connecting LLM calls with other operations
+- **Data Integration**: Provides tools to connect LLMs with external data sources
+- **Memory Management**: Handles conversation history and context preservation
+- **Tool Integration**: Enables LLMs to use external tools and APIs
+- **Standardization**: Offers consistent interfaces across different LLM providers
+
+### 2. Explain the basic components of LangChain architecture.
+
+**Answer:** The core components include:
+- **LLMs**: Large Language Model integrations (OpenAI, Anthropic, etc.)
+- **Prompts**: Template management for consistent prompt formatting
+- **Chains**: Sequences of operations combining LLMs with other tools
+- **Memory**: Components to store and retrieve conversation context
+- **Agents**: Autonomous entities that can use tools and make decisions
+- **Tools**: External functions that agents can invoke
+- **Document Loaders**: Import data from various sources
+- **Vector Stores**: Store and retrieve document embeddings
+
+### 3. What are Chains in LangChain and give examples of different chain types?
+
+**Answer:** Chains are sequences of operations that combine LLMs with other components. Common types:
+- **LLMChain**: Basic chain with LLM + prompt template
+- **SequentialChain**: Multiple chains executed in sequence
+- **TransformChain**: Applies transformations to input/output
+- **ConversationChain**: Maintains conversation memory
+- **RetrievalQA Chain**: Combines document retrieval with question answering
+- **APIChain**: Integrates external API calls with LLM processing
+
+### 4. How do you install and set up LangChain for a basic project?
+
+**Answer:**
+```bash
+# Install LangChain
+pip install langchain
+
+# Install specific integrations
+pip install langchain-openai  # For OpenAI
+pip install langchain-community  # Additional components
+
+# Basic setup
+import os
+from langchain_openai import OpenAI
+
+os.environ["OPENAI_API_KEY"] = "your-api-key"
+llm = OpenAI(temperature=0.7)
+```
+
+### 5. What is a Prompt Template and why is it important?
+
+**Answer:** A Prompt Template is a structured way to format prompts with variables. Benefits:
+- **Consistency**: Ensures uniform prompt formatting
+- **Reusability**: Same template can be used with different inputs
+- **Maintenance**: Easy to update prompts across applications
+- **Variable Injection**: Safely insert dynamic content
+
+Example:
+```python
+from langchain.prompts import PromptTemplate
+
+template = "Translate {text} from {source_language} to {target_language}"
+prompt = PromptTemplate(
+    input_variables=["text", "source_language", "target_language"],
+    template=template
+)
+```
+
+### 6. What are Document Loaders and name some common types?
+
+**Answer:** Document Loaders are components that import data from various sources into LangChain. Common types:
+- **TextLoader**: Plain text files
+- **CSVLoader**: CSV files
+- **PDFLoader**: PDF documents
+- **WebBaseLoader**: Web pages
+- **DirectoryLoader**: Multiple files from a directory
+- **NotionLoader**: Notion pages
+- **GoogleDriveLoader**: Google Drive documents
+- **WikipediaLoader**: Wikipedia articles
+
+### 7. Explain what Vector Stores are and their role in LangChain.
+
+**Answer:** Vector Stores are databases that store and retrieve document embeddings for similarity search. Key roles:
+- **Semantic Search**: Find relevant documents based on meaning, not keywords
+- **RAG Support**: Enable Retrieval Augmented Generation
+- **Efficient Retrieval**: Fast similarity-based document lookup
+- **Scalability**: Handle large document collections
+
+Common vector stores: FAISS, Chroma, Pinecone, Weaviate, Qdrant
+
+### 8. What is the difference between LangChain and direct LLM API usage?
+
+**Answer:**
+**Direct LLM API:**
+- Raw API calls to providers
+- Manual prompt management
+- No built-in memory or chaining
+- Limited data integration
+
+**LangChain:**
+- Abstracted, standardized interface
+- Built-in prompt templates and memory
+- Easy chaining of operations
+- Rich ecosystem of integrations
+- Agent and tool support
+
+### 9. How do you handle API keys and configuration in LangChain?
+
+**Answer:** Multiple approaches:
+```python
+# Environment variables (recommended)
+import os
+os.environ["OPENAI_API_KEY"] = "your-key"
+
+# Direct parameter passing
+llm = OpenAI(api_key="your-key")
+
+# Using .env files
+from dotenv import load_dotenv
+load_dotenv()
+
+# Configuration files
+from langchain.config import Config
+```
+
+### 10. What is the purpose of Text Splitters in LangChain?
+
+**Answer:** Text Splitters break large documents into smaller chunks for processing. Reasons:
+- **Token Limits**: LLMs have maximum token constraints
+- **Embedding Efficiency**: Better vector representations
+- **Retrieval Accuracy**: More precise document matching
+- **Memory Management**: Reduced computational overhead
+
+Common splitters: CharacterTextSplitter, RecursiveCharacterTextSplitter, TokenTextSplitter
+
+---
+
+## 🚀 INTERMEDIATE LEVEL QUESTIONS (10)
+
+### 1. Explain Retrieval Augmented Generation (RAG) and how to implement it in LangChain.
+
+**Answer:** RAG combines retrieval of relevant documents with LLM generation to provide accurate, context-aware responses. Implementation:
+
+```python
+from langchain.chains import RetrievalQA
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAI, OpenAIEmbeddings
+
+# Setup
+embeddings = OpenAIEmbeddings()
+vectorstore = FAISS.from_documents(documents, embeddings)
+llm = OpenAI()
+
+# Create RAG chain
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vectorstore.as_retriever(),
+    return_source_documents=True
+)
+```
+
+Benefits: Reduced hallucinations, up-to-date information, source attribution.
+
+### 2. What are LangChain Agents and how do they differ from Chains?
+
+**Answer:** 
+**Agents** are autonomous entities that can decide which tools to use and in what order based on user input.
+
+**Chains** follow a predetermined sequence of operations.
+
+Key differences:
+- **Decision Making**: Agents make dynamic decisions, chains follow fixed paths
+- **Tool Usage**: Agents can select from multiple tools, chains use predefined tools
+- **Flexibility**: Agents adapt to different queries, chains are more rigid
+- **Complexity**: Agents are more complex but more powerful
+
+Agent types: Zero-shot ReAct, Conversational, Plan-and-Execute, OpenAI Functions.
+
+### 3. Explain Memory in LangChain and different memory types available.
+
+**Answer:** Memory enables LangChain applications to remember previous interactions. Types:
+
+- **ConversationBufferMemory**: Stores entire conversation history
+- **ConversationSummaryMemory**: Summarizes old conversations to save tokens
+- **ConversationBufferWindowMemory**: Keeps only recent K interactions
+- **ConversationTokenBufferMemory**: Maintains conversation up to token limit
+- **ConversationSummaryBufferMemory**: Hybrid approach combining summary and recent messages
+- **VectorStoreRetrieverMemory**: Uses vector similarity for memory retrieval
+
+### 4. How do you implement custom tools for LangChain agents?
+
+**Answer:**
+```python
+from langchain.tools import BaseTool
+from typing import Optional, Type
+from pydantic import BaseModel, Field
+
+class CalculatorInput(BaseModel):
+    expression: str = Field(description="mathematical expression to calculate")
+
+class CalculatorTool(BaseTool):
+    name = "Calculator"
+    description = "Calculate mathematical expressions"
+    args_schema: Type[BaseModel] = CalculatorInput
+    
+    def _run(self, expression: str) -> str:
+        try:
+            result = eval(expression)  # Use safely in production
+            return f"Result: {result}"
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    async def _arun(self, expression: str) -> str:
+        # Async implementation
+        return self._run(expression)
+```
+
+### 5. What is LangGraph and how does it relate to LangChain?
+
+**Answer:** LangGraph is a low-level agent orchestration framework, giving developers durable execution and fine-grained control to run complex agentic systems in production. Key features:
+
+- **State Management**: Persistent state across agent interactions
+- **Graph-based Workflows**: Define complex agent workflows as graphs
+- **Durability**: Handle failures and retries gracefully
+- **Multi-agent Orchestration**: Coordinate multiple agents
+- **Production Ready**: Built for enterprise deployment
+
+LangGraph works alongside LangChain, providing more sophisticated agent orchestration capabilities.
+
+### 6. How do you handle streaming responses in LangChain?
+
+**Answer:**
+```python
+from langchain.callbacks import StreamingStdOutCallbackHandler
+from langchain_openai import OpenAI
+
+# Setup streaming callback
+callback = StreamingStdOutCallbackHandler()
+llm = OpenAI(streaming=True, callbacks=[callback])
+
+# For chains
+chain = LLMChain(llm=llm, prompt=prompt, callbacks=[callback])
+
+# Custom streaming handler
+class CustomStreamHandler(BaseCallbackHandler):
+    def on_llm_new_token(self, token: str, **kwargs) -> None:
+        print(f"Token: {token}")
+
+# Async streaming
+async def stream_response():
+    async for chunk in llm.astream("Your prompt here"):
+        print(chunk, end="")
+```
+
+### 7. Explain the concept of Chain of Thought prompting and its implementation.
+
+**Answer:** Chain of Thought (CoT) prompting encourages step-by-step reasoning. Implementation approaches:
+
+```python
+# Manual CoT
+cot_template = """
+Question: {question}
+
+Let's think step by step:
+1. First, I need to understand what's being asked
+2. Then, I'll break down the problem
+3. Finally, I'll provide the answer
+
+Answer:
+"""
+
+# Using LangChain's built-in support
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+
+prompt = PromptTemplate(
+    template=cot_template,
+    input_variables=["question"]
+)
+```
+
+Benefits: Improved reasoning accuracy, better handling of complex problems, interpretable results.
+
+### 8. How do you implement error handling and retries in LangChain applications?
+
+**Answer:**
+```python
+import time
+from langchain.callbacks import BaseCallbackHandler
+from langchain.schema import LLMResult
+
+class RetryHandler(BaseCallbackHandler):
+    def on_llm_error(self, error: Exception, **kwargs) -> None:
+        print(f"LLM Error: {error}")
+        # Implement retry logic
+
+# Using tenacity for retries
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
+def call_llm_with_retry(llm, prompt):
+    try:
+        return llm(prompt)
+    except Exception as e:
+        print(f"Retry due to error: {e}")
+        raise
+
+# Circuit breaker pattern
+class CircuitBreakerLLM:
+    def __init__(self, llm, failure_threshold=5):
+        self.llm = llm
+        self.failure_count = 0
+        self.failure_threshold = failure_threshold
+        self.is_open = False
+```
+
+### 9. What are Output Parsers and how do you create custom ones?
+
+**Answer:** Output Parsers structure LLM responses into specific formats. Creating custom parsers:
+
+```python
+from langchain.schema import BaseOutputParser
+from typing import Dict, List
+
+class JSONOutputParser(BaseOutputParser[Dict]):
+    def parse(self, text: str) -> Dict:
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            # Fallback parsing logic
+            return {"error": "Invalid JSON", "raw_text": text}
+    
+    def get_format_instructions(self) -> str:
+        return "Output should be valid JSON format"
+
+# Using Pydantic for structured output
+from pydantic import BaseModel, Field
+
+class PersonInfo(BaseModel):
+    name: str = Field(description="Person's name")
+    age: int = Field(description="Person's age")
+    occupation: str = Field(description="Person's job")
+
+parser = PydanticOutputParser(pydantic_object=PersonInfo)
+```
+
+### 10. How do you optimize LangChain applications for production use?
+
+**Answer:** Production optimization strategies:
+
+**Performance:**
+- Use async operations where possible
+- Implement caching for frequent operations
+- Optimize prompt lengths
+- Use streaming for long responses
+
+**Reliability:**
+- Implement comprehensive error handling
+- Add retry mechanisms with exponential backoff
+- Use circuit breaker patterns
+- Monitor API rate limits
+
+**Observability:**
+- Add logging and monitoring
+- Track token usage and costs
+- Implement tracing for debugging
+- Use callbacks for metrics collection
+
+**Security:**
+- Secure API key management
+- Input validation and sanitization
+- Rate limiting for public endpoints
+- Audit logging for sensitive operations
+
+---
+
+## 🔥 ADVANCED LEVEL QUESTIONS (10)
+
+### 1. Design a multi-agent system using LangGraph for complex workflow orchestration.
+
+**Answer:** LangChain's agent architecture in 2025 has evolved into a modular, layered system where agents specialize in planning, execution, communication, and evaluation.
+
+```python
+from langgraph.graph import StateGraph, END
+from langchain.schema import BaseMessage
+from typing import TypedDict, List
+
+class WorkflowState(TypedDict):
+    messages: List[BaseMessage]
+    current_step: str
+    results: dict
+    metadata: dict
+
+# Define specialized agents
+class PlannerAgent:
+    def __call__(self, state: WorkflowState) -> WorkflowState:
+        # Planning logic
+        plan = self.create_execution_plan(state["messages"])
+        state["results"]["plan"] = plan
+        return state
+
+class ExecutorAgent:
+    def __call__(self, state: WorkflowState) -> WorkflowState:
+        # Execution logic
+        results = self.execute_plan(state["results"]["plan"])
+        state["results"]["execution"] = results
+        return state
+
+class EvaluatorAgent:
+    def __call__(self, state: WorkflowState) -> WorkflowState:
+        # Evaluation logic
+        score = self.evaluate_results(state["results"])
+        state["results"]["evaluation"] = score
+        return state
+
+# Build the graph
+def build_multi_agent_workflow():
+    workflow = StateGraph(WorkflowState)
+    
+    workflow.add_node("planner", PlannerAgent())
+    workflow.add_node("executor", ExecutorAgent())
+    workflow.add_node("evaluator", EvaluatorAgent())
+    
+    workflow.add_edge("planner", "executor")
+    workflow.add_edge("executor", "evaluator")
+    workflow.add_edge("evaluator", END)
+    
+    workflow.set_entry_point("planner")
+    
+    return workflow.compile()
+```
+
+### 2. Implement a sophisticated RAG system with re-ranking and query expansion.
+
+**Answer:** In 2025, RAG is evolving rapidly. Innovations like Long RAG (capable of handling 25,000+ tokens) and Adaptive RAG (which learns from user feedback) are pushing the boundaries
+
+```python
+from langchain.retrievers import EnsembleRetriever, BM25Retriever
+from langchain_community.retrievers import RankGPTRetriever
+from langchain.schema import Document
+from typing import List
+
+class AdvancedRAGSystem:
+    def __init__(self, vectorstore, llm):
+        self.vectorstore = vectorstore
+        self.llm = llm
+        self.setup_retrievers()
+    
+    def setup_retrievers(self):
+        # Hybrid retrieval: Vector + BM25
+        vector_retriever = self.vectorstore.as_retriever(search_kwargs={"k": 20})
+        bm25_retriever = BM25Retriever.from_documents(self.documents)
+        
+        self.ensemble_retriever = EnsembleRetriever(
+            retrievers=[vector_retriever, bm25_retriever],
+            weights=[0.7, 0.3]
+        )
+        
+        # Re-ranking
+        self.reranker = RankGPTRetriever(
+            retriever=self.ensemble_retriever,
+            llm=self.llm,
+            top_k=5
+        )
+    
+    def expand_query(self, query: str) -> List[str]:
+        """Generate multiple query variations"""
+        expansion_prompt = f"""
+        Generate 3 variations of this query that might find relevant information:
+        Original: {query}
+        
+        Variations:
+        1. 
+        2. 
+        3. 
+        """
+        
+        response = self.llm(expansion_prompt)
+        # Parse variations from response
+        return self.parse_query_variations(response)
+    
+    def retrieve_with_expansion(self, query: str) -> List[Document]:
+        """Retrieve documents using query expansion"""
+        queries = [query] + self.expand_query(query)
+        all_docs = []
+        
+        for q in queries:
+            docs = self.reranker.get_relevant_documents(q)
+            all_docs.extend(docs)
+        
+        # Deduplicate and re-rank
+        return self.deduplicate_and_rank(all_docs)
+    
+    def adaptive_retrieval(self, query: str, feedback_score: float = None):
+        """Adjust retrieval strategy based on feedback"""
+        if feedback_score and feedback_score < 0.5:
+            # Poor feedback - use more aggressive expansion
+            return self.retrieve_with_expansion(query)
+        else:
+            # Good feedback - use standard retrieval
+            return self.reranker.get_relevant_documents(query)
+```
+
+### 3. How would you implement long-term memory for agents across sessions?
+
+**Answer:** This new integration between MongoDB and LangGraph, LangChain's open-source agent orchestration framework, allows agents to remember and build on previous interactions across multiple sessions instead of only retaining memory for the current session.
+
+```python
+from langchain.memory import BaseChatMemory
+from langchain.schema import BaseMessage
+import json
+from datetime import datetime, timedelta
+
+class PersistentAgentMemory:
+    def __init__(self, database_connection, user_id: str):
+        self.db = database_connection
+        self.user_id = user_id
+        self.session_id = self.generate_session_id()
+    
+    def store_interaction(self, input_msg: str, output_msg: str, metadata: dict):
+        """Store conversation interaction with context"""
+        interaction = {
+            "user_id": self.user_id,
+            "session_id": self.session_id,
+            "timestamp": datetime.now(),
+            "input": input_msg,
+            "output": output_msg,
+            "metadata": metadata,
+            "embedding": self.generate_embedding(input_msg + output_msg)
+        }
+        
+        self.db.interactions.insert_one(interaction)
+    
+    def retrieve_relevant_memories(self, current_input: str, k: int = 5):
+        """Retrieve similar past interactions"""
+        current_embedding = self.generate_embedding(current_input)
+        
+        # Vector similarity search in database
+        similar_interactions = self.db.interactions.aggregate([
+            {
+                "$vectorSearch": {
+                    "index": "memory_embeddings",
+                    "path": "embedding",
+                    "queryVector": current_embedding,
+                    "numCandidates": 50,
+                    "limit": k,
+                    "filter": {"user_id": self.user_id}
+                }
+            },
+            {
+                "$match": {
+                    "timestamp": {"$gte": datetime.now() - timedelta(days=30)}
+                }
+            }
+        ])
+        
+        return list(similar_interactions)
+    
+    def get_conversation_summary(self, days: int = 7):
+        """Generate summary of recent conversations"""
+        recent_interactions = self.db.interactions.find({
+            "user_id": self.user_id,
+            "timestamp": {"$gte": datetime.now() - timedelta(days=days)}
+        })
+        
+        # Use LLM to summarize
+        conversations = "\n".join([
+            f"User: {i['input']}\nAgent: {i['output']}"
+            for i in recent_interactions
+        ])
+        
+        summary_prompt = f"""
+        Summarize the key themes and preferences from these conversations:
+        {conversations}
+        
+        Focus on:
+        - User preferences and interests
+        - Recurring topics
+        - Important context for future interactions
+        """
+        
+        return self.llm(summary_prompt)
+
+class LongTermMemoryAgent:
+    def __init__(self, llm, memory: PersistentAgentMemory):
+        self.llm = llm
+        self.memory = memory
+    
+    def process_query(self, query: str):
+        # Retrieve relevant memories
+        memories = self.memory.retrieve_relevant_memories(query)
+        conversation_summary = self.memory.get_conversation_summary()
+        
+        # Construct enhanced prompt
+        enhanced_prompt = f"""
+        Context from past conversations:
+        {conversation_summary}
+        
+        Relevant past interactions:
+        {self.format_memories(memories)}
+        
+        Current query: {query}
+        
+        Based on the conversation history and context, provide a personalized response:
+        """
+        
+        response = self.llm(enhanced_prompt)
+        
+        # Store this interaction
+        self.memory.store_interaction(
+            query, 
+            response, 
+            {"model": "gpt-4", "context_used": len(memories)}
+        )
+        
+        return response
+```
+
+### 4. Explain how to implement custom embeddings and vector store optimizations.
+
+**Answer:**
+```python
+from langchain.embeddings.base import Embeddings
+from typing import List
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+import faiss
+
+class HybridEmbeddings(Embeddings):
+    """Combines multiple embedding strategies"""
+    
+    def __init__(self, primary_embeddings, secondary_embeddings, weights=[0.7, 0.3]):
+        self.primary = primary_embeddings
+        self.secondary = secondary_embeddings
+        self.weights = weights
+    
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        primary_embeds = self.primary.embed_documents(texts)
+        secondary_embeds = self.secondary.embed_documents(texts)
+        
+        # Weighted combination
+        combined = []
+        for p, s in zip(primary_embeds, secondary_embeds):
+            combined_embed = (
+                np.array(p) * self.weights[0] + 
+                np.array(s) * self.weights[1]
+            )
+            combined.append(combined_embed.tolist())
+        
+        return combined
+    
+    def embed_query(self, text: str) -> List[float]:
+        return self.embed_documents([text])[0]
+
+class OptimizedVectorStore:
+    """Custom vector store with advanced optimizations"""
+    
+    def __init__(self, embedding_dimension: int):
+        self.dimension = embedding_dimension
+        self.index = self._create_optimized_index()
+        self.metadata_store = {}
+        self.text_store = {}
+        
+    def _create_optimized_index(self):
+        # Use HNSW for better performance
+        index = faiss.IndexHNSWFlat(self.dimension, 32)
+        index.hnsw.efConstruction = 200
+        index.hnsw.efSearch = 50
+        return index
+    
+    def add_documents(self, documents: List[Document], embeddings: List[List[float]]):
+        """Add documents with batch optimization"""
+        # Convert to numpy array for efficiency
+        embedding_matrix = np.array(embeddings, dtype=np.float32)
+        
+        # Normalize for cosine similarity
+        faiss.normalize_L2(embedding_matrix)
+        
+        # Batch add to index
+        start_id = self.index.ntotal
+        self.index.add(embedding_matrix)
+        
+        # Store metadata
+        for i, doc in enumerate(documents):
+            doc_id = start_id + i
+            self.metadata_store[doc_id] = doc.metadata
+            self.text_store[doc_id] = doc.page_content
+    
+    def similarity_search_with_score(self, query_embedding: List[float], k: int = 4):
+        """Optimized similarity search"""
+        query_vector = np.array([query_embedding], dtype=np.float32)
+        faiss.normalize_L2(query_vector)
+        
+        distances, indices = self.index.search(query_vector, k)
+        
+        results = []
+        for distance, idx in zip(distances[0], indices[0]):
+            if idx != -1:  # Valid result
+                results.append({
+                    "document": Document(
+                        page_content=self.text_store[idx],
+                        metadata=self.metadata_store[idx]
+                    ),
+                    "score": 1 - distance  # Convert distance to similarity
+                })
+        
+        return results
+    
+    def create_filtered_index(self, filter_criteria: dict):
+        """Create specialized index for filtered searches"""
+        filtered_ids = []
+        for doc_id, metadata in self.metadata_store.items():
+            if all(metadata.get(k) == v for k, v in filter_criteria.items()):
+                filtered_ids.append(doc_id)
+        
+        # Create subset index
+        subset_vectors = np.array([
+            self.index.reconstruct(doc_id) for doc_id in filtered_ids
+        ], dtype=np.float32)
+        
+        filtered_index = faiss.IndexFlatIP(self.dimension)
+        filtered_index.add(subset_vectors)
+        
+        return filtered_index, filtered_ids
+```
+
+### 5. How would you implement a production-ready LangChain application with monitoring and observability?
+
+**Answer:**
+```python
+from langchain.callbacks import BaseCallbackHandler
+from langchain.schema import LLMResult, AgentAction, AgentFinish
+import logging
+import time
+import json
+from typing import Any, Dict, List, Optional
+from prometheus_client import Counter, Histogram, Gauge, start_http_server
+
+# Metrics collection
+REQUEST_COUNT = Counter('langchain_requests_total', 'Total requests', ['model', 'status'])
+REQUEST_DURATION = Histogram('langchain_request_duration_seconds', 'Request duration')
+TOKEN_USAGE = Counter('langchain_tokens_total', 'Token usage', ['type', 'model'])
+ACTIVE_REQUESTS = Gauge('langchain_active_requests', 'Active requests')
+
+class ProductionCallbackHandler(BaseCallbackHandler):
+    """Comprehensive monitoring callback"""
+    
+    def __init__(self, session_id: str = None):
+        self.session_id = session_id or self.generate_session_id()
+        self.request_start_time = None
+        self.current_request = {}
+        
+    def on_llm_start(self, serialized: Dict[str, Any], prompts: List[str], **kwargs) -> None:
+        self.request_start_time = time.time()
+        ACTIVE_REQUESTS.inc()
+        
+        self.current_request = {
+            "session_id": self.session_id,
+            "timestamp": self.request_start_time,
+            "model": serialized.get("model_name", "unknown"),
+            "prompts": prompts,
+            "prompt_tokens": sum(len(p.split()) for p in prompts)  # Rough estimate
+        }
+        
+        logging.info(f"LLM request started: {self.session_id}")
+    
+    def on_llm_end(self, response: LLMResult, **kwargs) -> None:
+        duration = time.time() - self.request_start_time
+        ACTIVE_REQUESTS.dec()
+        REQUEST_DURATION.observe(duration)
+        
+        model = self.current_request.get("model", "unknown")
+        REQUEST_COUNT.labels(model=model, status="success").inc()
+        
+        # Token tracking
+        if hasattr(response, 'llm_output') and response.llm_output:
+            token_usage = response.llm_output.get('token_usage', {})
+            if token_usage:
+                TOKEN_USAGE.labels(type="prompt", model=model).inc(
+                    token_usage.get('prompt_tokens', 0)
+                )
+                TOKEN_USAGE.labels(type="completion", model=model).inc(
+                    token_usage.get('completion_tokens', 0)
+                )
+        
+        # Structured logging
+        self.current_request.update({
+            "duration": duration,
+            "status": "success",
+            "response_length": len(str(response.generations))
+        })
+        
+        logging.info(f"LLM request completed: {json.dumps(self.current_request)}")
+    
+    def on_llm_error(self, error: Exception, **kwargs) -> None:
+        duration = time.time() - self.request_start_time if self.request_start_time else 0
+        ACTIVE_REQUESTS.dec()
+        
+        model = self.current_request.get("model", "unknown")
+        REQUEST_COUNT.labels(model=model, status="error").inc()
+        
+        logging.error(f"LLM request failed: {self.session_id}, Error: {error}")
+
+class DistributedTracing:
+    """OpenTelemetry-style distributed tracing"""
+    
+    def __init__(self):
+        self.active_spans = {}
+    
+    def start_span(self, operation_name: str, parent_span=None) -> str:
+        span_id = self.generate_span_id()
+        span = {
+            "span_id": span_id,
+            "operation_name": operation_name,
+            "start_time": time.time(),
+            "parent_span": parent_span,
+            "attributes": {}
+        }
+        self.active_spans[span_id] = span
+        return span_id
+    
+    def add_span_attribute(self, span_id: str, key: str, value: Any):
+        if span_id in self.active_spans:
+            self.active_spans[span_id]["attributes"][key] = value
+    
+    def end_span(self, span_id: str):
+        if span_id in self.active_spans:
+            span = self.active_spans[span_id]
+            span["duration"] = time.time() - span["start_

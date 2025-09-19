@@ -1,0 +1,2 @@
+how woudl to trian and deploy a base model 
+all steps and also code 

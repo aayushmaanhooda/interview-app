@@ -1,0 +1,14 @@
+{
+  "name": "interview-learning-app",
+  "version": 2,
+  "buildCommand": "cd app && npm run build",
+  "outputDirectory": "app/build",
+  "installCommand": "cd app && npm install",
+  "framework": "create-react-app",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
